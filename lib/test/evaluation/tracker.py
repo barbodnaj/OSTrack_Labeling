@@ -151,7 +151,7 @@ class Tracker:
 
         return output
 
-    def run_video(self, videofilepath, optional_box=None, debug=None, visdom_info=None, save_results=False):
+    def run_video(self, videofilepath, name ,optional_box=None, debug=None, visdom_info=None, save_results=False):
         """Run the tracker with the vieofile.
         args:
             debug: Debug level.
@@ -214,8 +214,9 @@ class Tracker:
                 tracker.initialize(frame, _build_init_info(init_state))
                 output_boxes.append(init_state)
                 break
-
+        result = cv.VideoWriter('output_'+name+'.avi', cv.VideoWriter_fourcc(*'XVID'), 30.0, (960, 720))
         while True:
+            
             ret, frame = cap.read()
 
             if frame is None:
@@ -229,7 +230,8 @@ class Tracker:
             output_boxes.append(state)
 
             cv.rectangle(frame_disp, (state[0], state[1]), (state[2] + state[0], state[3] + state[1]),
-                         (0, 255, 0), 5)
+                         (0, 255, 0), 3)
+            cv.putText(frame_disp, name , (state[0]+30, state[1]), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
             font_color = (0, 0, 0)
             cv.putText(frame_disp, 'Tracking!', (20, 30), cv.FONT_HERSHEY_COMPLEX_SMALL, 1,
@@ -257,8 +259,13 @@ class Tracker:
                 tracker.initialize(frame, _build_init_info(init_state))
                 output_boxes.append(init_state)
 
+            
+            resize = cv.resize(frame_disp, (960, 720))
+            result.write(resize)
+
         # When everything done, release the capture
         cap.release()
+        result.release()
         cv.destroyAllWindows()
 
         if save_results:
@@ -268,7 +275,7 @@ class Tracker:
             base_results_path = os.path.join(self.results_dir, 'video_{}'.format(video_name))
 
             tracked_bb = np.array(output_boxes).astype(int)
-            bbox_file = '{}.txt'.format(base_results_path)
+            bbox_file = '{}.txt'.format(base_results_path+'_'+name)
             np.savetxt(bbox_file, tracked_bb, delimiter='\t', fmt='%d')
 
 
