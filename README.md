@@ -149,7 +149,16 @@ python tracking/profile_model.py --script ostrack --config vitb_256_mae_ce_32x4_
 # Profiling vitb_384_mae_ce_32x4_ep300
 python tracking/profile_model.py --script ostrack --config vitb_384_mae_ce_32x4_ep300
 ```
+## For Labelling
 
+I have changed video_demo.py add name variable that take the name of label
+
+```
+# example
+
+python tracking/video_demo.py ostrack vitb_384_mae_ce_32x4_ep300 test.avi "light" --save_results
+```
+most put the pretrained model in this location output/checkpoints/train/ostrack
 
 ## Acknowledgments
 * Thanks for the [STARK](https://github.com/researchmm/Stark) and [PyTracking](https://github.com/visionml/pytracking) library, which helps us to quickly implement our ideas.
